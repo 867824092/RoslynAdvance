@@ -1,0 +1,30 @@
+﻿@page "/code"
+@using System.Text.Json;
+@using MonacoRoslynCompletionProvider.Api;
+@using MonacoRoslynCompletionProvider;
+@using System.Reflection;
+@inject IJSRuntime JS
+
+<StandaloneCodeEditor Id="my-editor-instance-id" ConstructionOptions="EditorConstructionOptions"  @ref="_editor"/>
+
+@code {
+	private StandaloneCodeEditor _editor = null!;
+	private StandaloneEditorConstructionOptions EditorConstructionOptions(StandaloneCodeEditor editor) {
+		return new StandaloneEditorConstructionOptions {
+			    GlyphMargin = true,
+				AutomaticLayout = true,
+				Language = "csharp",
+				Theme = "vs-dark",
+				Value = "using System; \n" +
+						"internal class Program { \n " +
+						"   private static void Main(string[] args) {\n " +
+						"       Console.WriteLine(\"Hello World!\");\n " +
+						"   }\n " +
+						"}"
+			};
+	}
+	protected override async Task OnInitializedAsync() {
+		await JS.InvokeVoidAsync("registerCsharpProvider");
+		await base.OnInitializedAsync();
+	}
+}
